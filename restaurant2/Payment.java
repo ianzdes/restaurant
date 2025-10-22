@@ -1,4 +1,4 @@
-package restaurant;
+package restaurant.restaurant2;
 
 public class Payment {
     private double amount;

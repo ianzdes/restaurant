@@ -1,4 +1,4 @@
-package restaurant;
+package restaurant.restaurant2;
 
 public class Dish {
     private String name;

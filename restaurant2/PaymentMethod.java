@@ -1,4 +1,4 @@
-package restaurant;
+package restaurant.restaurant2;
 
 public enum PaymentMethod {
     CASH,
