@@ -13,26 +13,22 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        // 1️⃣ Gerar dados
         List<Person> people = DataGenerator.generatePeople(50);
         List<Place> places = DataGenerator.generatePlaces();
         List<Event> events = DataGenerator.generateEvents(10, places);
         List<Appointment> appointments = DataGenerator.generateAppointments(20, people, places);
         List<Dish> dishes = DataGenerator.generateDishes();
 
-        // 2️⃣ Criar EventManager e adicionar eventos
         EventManager eventManager = new EventManager();
         for (Event e : events) {
             eventManager.addEvent(e);
         }
 
-        // 3️⃣ Criar pedidos aleatórios no restaurante
         Order order1 = new Order();
         order1.addDish(dishes.get(0));
         order1.addDish(dishes.get(1));
         order1.makePayment(PaymentMethod.CASH);
 
-        // 4️⃣ Mostrar algumas informações
         System.out.println("=== Pessoas geradas ===");
         people.forEach(System.out::println);
 
