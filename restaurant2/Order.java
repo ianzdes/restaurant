@@ -30,11 +30,7 @@ public class Order {
         this.payment = new Payment(total, method);
     }
     // getters
-    public List<Dish> getItems() {
-        return items;
-    }
+    public List<Dish> getItems() { return items; }
 
-    public Payment getPayment() {
-        return payment;
-    }
+    public Payment getPayment() { return payment; }
 }
