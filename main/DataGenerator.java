@@ -7,6 +7,7 @@ import restaurant.shared.Person;
 import restaurant.shared.Place;
 import restaurant.clinic.Appointment;
 import restaurant.event.Event;
+import restaurant.event.Participation;
 import restaurant.restaurant2.Dish;
 
 public class DataGenerator {
@@ -95,4 +96,18 @@ public class DataGenerator {
             new Dish("Suco de Laranja", "Bebida", 9.00)
         );
     }
+
+    public static List<Participation> generateParticipations(List<Event> events) {
+    List<Participation> participations = new ArrayList<>();
+    Random random = new Random();
+
+    for (Event e : events) {
+        for (Person p : e.getParticipants()) {
+            boolean voucherUsed = random.nextBoolean(); // aleatório
+            participations.add(new Participation(p, e, voucherUsed));
+        }
+    }
+
+    return participations;
+}
 }

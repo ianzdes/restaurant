@@ -6,7 +6,6 @@ import java.util.List;
 public class Order {
     // attributes
     private List<Dish> items; // pratos
-    private Payment payment; // pagamento
     private PaymentMethod paymentMethod;
     // constructor
     public Order() {
@@ -26,12 +25,11 @@ public class Order {
         return total;
     }
 
-    public void makePayment(PaymentMethod method) {
-        double total = totalPrice();
-        this.payment = new Payment(total, method);
-    }
     // getters
     public List<Dish> getItems() { return items; }
-    public Payment getPayment() { return payment; }
     public PaymentMethod getPaymentMethod() { return paymentMethod; }
+
+    public void makePayment(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
 }

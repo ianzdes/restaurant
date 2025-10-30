@@ -1,5 +1,5 @@
 package restaurant.shared;
-// local fisico onde algo acontece
+
 public class Place {
     private String name;
     private int capacity;
