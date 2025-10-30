@@ -11,13 +11,13 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        // ====== Gerar dados ======
+        // gerar dados
         List<Person> people = DataGenerator.generatePeople(50);
         List<Place> places = DataGenerator.generatePlaces();
         List<Appointment> appointments = DataGenerator.generateAppointments(20, people, places);
         List<Dish> dishes = DataGenerator.generateDishes();
 
-        // ====== Contar pessoas por tipo ======
+        // contar pessoas por tipo
         int numPacientes = 0, numClientes = 0, numParticipantes = 0;
         for (Person p : people) {
             switch (p.getType()) {
@@ -32,7 +32,7 @@ public class Main {
         System.out.println("Clientes: " + numClientes);
         System.out.println("Participantes: " + numParticipantes);
 
-        // ====== Contar consultas por tipo ======
+        // contar consultas por tipo
         int primeiraConsulta = 0, retorno = 0, checkup = 0;
         for (Appointment a : appointments) {
             switch (a.getType()) {
@@ -47,7 +47,7 @@ public class Main {
         System.out.println("Retorno: " + retorno);
         System.out.println("Check-up: " + checkup);
 
-        // ====== Pedidos do restaurante ======
+        // pedidos do restaurante
         Random random = new Random();
         Map<String, Integer> dishCounts = new HashMap<>();
         Map<PaymentMethod, Integer> paymentCounts = new HashMap<>();
@@ -70,7 +70,7 @@ public class Main {
         }
         System.out.printf("Total geral: R$ %.2f\n", totalPrice);
 
-        // ====== Métodos de pagamento mais usados ======
+        // métodos de pagamento mais usados
         System.out.println("\n=== Métodos de pagamento mais usados ===");
         for (PaymentMethod method : PaymentMethod.values()) {
             int count = paymentCounts.getOrDefault(method, 0);

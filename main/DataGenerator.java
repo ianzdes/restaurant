@@ -22,7 +22,7 @@ public class DataGenerator {
         );
     }
 
-    // Gera pessoas genéricas (pacientes, participantes e clientes)
+    // gera pessoas genéricas (pacientes, participantes e clientes)
     public static List<Person> generatePeople(int quantity) {
         List<Person> people = new ArrayList<>();
         String[] types = {"Paciente", "Participante", "Cliente"};
@@ -39,7 +39,7 @@ public class DataGenerator {
         return people;
     }
 
-    // Gera eventos e adiciona participantes reais da lista de pessoas
+    // gera eventos e adiciona participantes reais da lista de pessoas
     public static List<Event> generateEvents(int quantity, List<Place> places, List<Person> people) {
         List<Event> events = new ArrayList<>();
         String[] types = {"Palestra", "Oficina", "Show"};
@@ -67,7 +67,7 @@ public class DataGenerator {
         return events;
     }
 
-    // Gera consultas na clínica
+    // gera consultas na clínica
     public static List<Appointment> generateAppointments(int quantity, List<Person> people, List<Place> places) {
         List<Appointment> appointments = new ArrayList<>();
         String[] doctors = {"Dr. Silva", "Dra. Lima", "Dr. Souza"};
@@ -88,7 +88,7 @@ public class DataGenerator {
         return appointments;
     }
 
-    // Gera pratos do restaurante
+    // gera pratos do restaurante
     public static List<Dish> generateDishes() {
         return List.of(
             new Dish("Executivo de Picanha", "Executivo", 31.99),
