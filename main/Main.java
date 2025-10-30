@@ -3,7 +3,6 @@ package restaurant.main;
 import restaurant.shared.Person;
 import restaurant.shared.Place;
 import restaurant.clinic.Appointment;
-import restaurant.event.Participation;
 import restaurant.restaurant2.Dish;
 import restaurant.restaurant2.PaymentMethod;
 
