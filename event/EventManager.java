@@ -10,13 +10,4 @@ public class EventManager {
     public void addEvent(Event event) { events.add(event); }
     public List<Event> getAllEvents() { return events; }
     public int getEventCount() { return events.size(); }
-
-    public Event findEventByName(String name) {
-        for (Event e : events) {
-            if (e.getName().equalsIgnoreCase(name)) {
-                return e;
-            }
-        }
-        return null;
-    }
 }

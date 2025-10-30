@@ -12,10 +12,7 @@ public class Dish {
         this.price = price;
     }
 
-    // getters and setters, encapsulation
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
     public void setName(String name) {
         if (name == null || name.isBlank()) {
@@ -26,17 +23,9 @@ public class Dish {
         }
     }
 
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public double getPrice() {
-        return price;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
+    public double getPrice() { return price; }
 
     public void setPrice(double price) {
         if (price < 0) {

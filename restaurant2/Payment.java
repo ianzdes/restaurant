@@ -14,9 +14,7 @@ public class Payment {
         }
     }
 
-    public double getAmount() {
-        return amount;
-    }
+    public double getAmount() { return amount; }
 
     public void setAmount(double amount) {
         if (amount < 0) {
@@ -27,11 +25,6 @@ public class Payment {
         }
     }
 
-    public PaymentMethod getMethod() {
-        return method;
-    }
-
-    public void setMethod(PaymentMethod method) {
-        this.method = method;
-    }
+    public PaymentMethod getMethod() { return method; }
+    public void setMethod(PaymentMethod method) { this.method = method; }
 }

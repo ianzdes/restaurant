@@ -7,6 +7,7 @@ public class Order {
     // attributes
     private List<Dish> items; // pratos
     private Payment payment; // pagamento
+    private PaymentMethod paymentMethod;
     // constructor
     public Order() {
         this.items = new ArrayList<>();
@@ -31,6 +32,6 @@ public class Order {
     }
     // getters
     public List<Dish> getItems() { return items; }
-
     public Payment getPayment() { return payment; }
+    public PaymentMethod getPaymentMethod() { return paymentMethod; }
 }
