@@ -13,7 +13,7 @@ import java.util.*;
 
 public class AnalysisMain {
     public static void main(String[] args) {
-        DecimalFormat df = new DecimalFormat("0,00");
+        DecimalFormat df = new DecimalFormat("0.00");
 
         // ====== Gerar dados ======
         List<Person> people = DataGenerator.generatePeople(50);
@@ -25,9 +25,15 @@ public class AnalysisMain {
         List<Dish> dishes = DataGenerator.generateDishes();
         List<Order> orders = new ArrayList<>();
         Random random = new Random();
+
+        // Criar pedidos realistas
         for (Person p : people) {
             Order o = new Order();
-            o.addDish(dishes.get(random.nextInt(dishes.size())));
+            // cada pessoa pede entre 1 e 3 pratos
+            int numDishes = 1 + random.nextInt(3);
+            for (int i = 0; i < numDishes; i++) {
+                o.addDish(dishes.get(random.nextInt(dishes.size())));
+            }
             orders.add(o);
         }
 
@@ -35,30 +41,30 @@ public class AnalysisMain {
         System.out.println("\n=== ANÁLISE DE DECISÕES ===\n");
 
         double avgReturnDays = DecisionQueries.patientsReturnFaster(appointments, events);
-        System.out.println("1️⃣ Pacientes que participam de eventos retornam em média após " + df.format(avgReturnDays) + " dias.");
+        System.out.println("1 - Pacientes que participam de eventos retornam em média após " + df.format(avgReturnDays) + " dias.");
 
         double avgVoucherUse = DecisionQueries.voucherUsageTime(participations, orders);
-        System.out.println("2️⃣ Vouchers são usados em média após " + df.format(avgVoucherUse) + " dias.");
+        System.out.println("2 - Vouchers são usados em média após " + df.format(avgVoucherUse) + " dias.");
 
         double avgTicket = DecisionQueries.averageTicketWithVoucher(appointments, orders);
-        System.out.println("3️⃣ Ticket médio no restaurante: R$ " + df.format(avgTicket));
+        System.out.println("3 - Ticket médio no restaurante: R$ " + df.format(avgTicket));
 
         List<Person> fullJourneyPeople = DecisionQueries.fullJourneyProfile(people, appointments, events, orders);
-        System.out.println("4️⃣ " + fullJourneyPeople.size() + " pessoas completaram a jornada completa (consulta + evento + refeição).");
+        System.out.println("4 - " + fullJourneyPeople.size() + " pessoas completaram a jornada completa (consulta + evento + refeição).");
 
         Map<String, Long> popularPlaces = DecisionQueries.mostUsedPlaces(appointments, events, places);
-        System.out.println("5️⃣ Locais mais usados (consultas + eventos): " + popularPlaces);
+        System.out.println("5 - Locais mais usados (consultas + eventos): " + popularPlaces);
 
         Map<Integer, Long> popularHours = DecisionQueries.mostPopularHours(appointments, events);
-        System.out.println("6️⃣ Horários mais populares: " + popularHours);
+        System.out.println("6 - Horários mais populares: " + popularHours);
 
         long loyalCustomers = DecisionQueries.postEventLoyalty(events, orders);
-        System.out.println("7️⃣ " + loyalCustomers + " participantes de oficinas voltaram ao restaurante.");
+        System.out.println("7 - " + loyalCustomers + " participantes de oficinas voltaram ao restaurante.");
 
         String activeAgeGroup = DecisionQueries.activeAgeGroup(people, appointments, events);
-        System.out.println("8️⃣ Faixa etária mais ativa: " + activeAgeGroup);
+        System.out.println("8 - Faixa etária mais ativa: " + activeAgeGroup);
 
         double correlation = DecisionQueries.appointmentSpendingCorrelation(appointments, orders);
-        System.out.println("9️⃣ Correlação entre consultas e gastos: " + df.format(correlation));
+        System.out.println("9 - Correlação entre consultas e gastos: " + df.format(correlation));
     }
 }
