@@ -9,6 +9,8 @@ import restaurant.clinic.Appointment;
 import restaurant.event.Event;
 import restaurant.event.Participation;
 import restaurant.restaurant2.Dish;
+import restaurant.restaurant2.Order;
+import restaurant.restaurant2.PaymentMethod;
 
 public class DataGenerator {
 
@@ -31,11 +33,8 @@ public class DataGenerator {
             String name = "Pessoa " + (i + 1);
             int age = 18 + random.nextInt(50);
             String type = types[random.nextInt(types.length)];
-
-            // adiciona na lista
             people.add(new Person(name, age, type));
         }
-
         return people;
     }
 
@@ -60,10 +59,8 @@ public class DataGenerator {
                 Person participant = people.get(random.nextInt(people.size()));
                 event.addParticipant(participant);
             }
-
             events.add(event);
         }
-
         return events;
     }
 
@@ -84,7 +81,6 @@ public class DataGenerator {
 
             appointments.add(new Appointment(patient, doctor, place, time, type));
         }
-
         return appointments;
     }
 
@@ -97,17 +93,41 @@ public class DataGenerator {
         );
     }
 
+    // gera participações em eventos (com voucher)
     public static List<Participation> generateParticipations(List<Event> events) {
-    List<Participation> participations = new ArrayList<>();
-    Random random = new Random();
+        List<Participation> participations = new ArrayList<>();
+        Random random = new Random();
 
-    for (Event e : events) {
-        for (Person p : e.getParticipants()) {
-            boolean voucherUsed = random.nextBoolean(); // aleatório
-            participations.add(new Participation(p, e, voucherUsed));
+        for (Event e : events) {
+            for (Person p : e.getParticipants()) {
+                boolean voucherUsed = random.nextBoolean(); // aleatório
+                participations.add(new Participation(p, e, voucherUsed));
+            }
         }
+        return participations;
     }
 
-    return participations;
-}
+    // ✅ gera pedidos do restaurante (necessário pro AnalysisMain)
+    public static List<Order> generateOrders(List<Person> people, List<Dish> dishes) {
+        List<Order> orders = new ArrayList<>();
+        Random random = new Random();
+
+        for (Person p : people) {
+            Order order = new Order();
+
+            // cada pessoa pede entre 1 e 3 pratos
+            int numDishes = 1 + random.nextInt(3);
+            for (int i = 0; i < numDishes; i++) {
+                Dish dish = dishes.get(random.nextInt(dishes.size()));
+                order.addDish(dish);
+            }
+
+            // escolhe forma de pagamento aleatória
+            PaymentMethod method = PaymentMethod.values()[random.nextInt(PaymentMethod.values().length)];
+            order.makePayment(method);
+
+            orders.add(order);
+        }
+        return orders;
+    }
 }
