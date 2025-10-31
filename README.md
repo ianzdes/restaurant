@@ -30,7 +30,7 @@ Sistema de gerenciamento simplificado para restaurante, clínica e eventos, com:
 - Quais horários de eventos e consultas mais se sobrepõem.
 - Participantes de workshops voltam a consumir no restaurante depois.
 - Qual faixa etária é mais ativa.
-- Método de pagamento mais usado por área (restaurante, evento, clínica).
+- Método de pagamento mais usado.
 
 ## Como executar
 1. Compile todos os arquivos Java:
