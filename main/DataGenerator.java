@@ -1,7 +1,7 @@
 package restaurant.main;
 
-import java.util.*;
 import java.time.*;
+import java.util.*;
 
 import restaurant.shared.Person;
 import restaurant.shared.Place;
@@ -24,67 +24,51 @@ public class DataGenerator {
         );
     }
 
-    // gera pessoas genéricas (pacientes, participantes e clientes)
     public static List<Person> generatePeople(int quantity) {
-        List<Person> people = new ArrayList<>();
         String[] types = {"Paciente", "Participante", "Cliente"};
-
-        for (int i = 0; i < quantity; i++) {
-            String name = "Pessoa " + (i + 1);
-            int age = 18 + random.nextInt(50);
-            String type = types[random.nextInt(types.length)];
-            people.add(new Person(name, age, type));
-        }
-        return people;
+        List<Person> list = new ArrayList<>();
+        for (int i = 0; i < quantity; i++)
+            list.add(new Person("Pessoa " + (i + 1), 18 + random.nextInt(50), types[random.nextInt(3)]));
+        return list;
     }
 
-    // gera eventos e adiciona participantes reais da lista de pessoas
+    public static List<Appointment> generateAppointments(int quantity, List<Person> people, List<Place> places) {
+        String[] doctors = {"Dr. Silva", "Dra. Lima", "Dr. Souza"};
+        String[] types = {"Primeira consulta", "Retorno", "Check-up"};
+        List<Appointment> list = new ArrayList<>();
+        for (int i = 0; i < quantity; i++)
+            list.add(new Appointment(
+                people.get(random.nextInt(people.size())),
+                doctors[random.nextInt(doctors.length)],
+                places.get(0),
+                LocalDateTime.now().plusDays(random.nextInt(10)).withHour(8 + random.nextInt(8)),
+                types[random.nextInt(types.length)]
+            ));
+        return list;
+    }
+
     public static List<Event> generateEvents(int quantity, List<Place> places, List<Person> people) {
-        List<Event> events = new ArrayList<>();
         String[] types = {"Palestra", "Oficina", "Show"};
-
+        List<Event> events = new ArrayList<>();
         for (int i = 0; i < quantity; i++) {
-            String name = "Evento " + (i + 1);
-            String type = types[random.nextInt(types.length)];
-            Place place = places.get(random.nextInt(places.size()));
-
-            LocalDateTime time = LocalDateTime.now()
-                    .plusDays(random.nextInt(30))
-                    .plusHours(random.nextInt(10));
-
-            Event event = new Event(name, type, place, time);
-
-            int numParticipants = 5 + random.nextInt(15);
-            for (int j = 0; j < numParticipants; j++) {
-                Person participant = people.get(random.nextInt(people.size()));
-                event.addParticipant(participant);
-            }
-            events.add(event);
+            Event e = new Event("Evento " + (i + 1), types[random.nextInt(types.length)],
+                    places.get(random.nextInt(places.size())),
+                    LocalDateTime.now().plusDays(random.nextInt(30)).plusHours(random.nextInt(10)));
+            for (int j = 0; j < 5 + random.nextInt(10); j++)
+                e.addParticipant(people.get(random.nextInt(people.size())));
+            events.add(e);
         }
         return events;
     }
 
-    // gera consultas na clínica
-    public static List<Appointment> generateAppointments(int quantity, List<Person> people, List<Place> places) {
-        List<Appointment> appointments = new ArrayList<>();
-        String[] doctors = {"Dr. Silva", "Dra. Lima", "Dr. Souza"};
-        String[] types = {"Primeira consulta", "Retorno", "Check-up"};
-
-        for (int i = 0; i < quantity; i++) {
-            Person patient = people.get(random.nextInt(people.size()));
-            String doctor = doctors[random.nextInt(doctors.length)];
-            Place place = places.get(0); // Clínica
-            LocalDateTime time = LocalDateTime.now()
-                    .plusDays(random.nextInt(10))
-                    .withHour(8 + random.nextInt(8));
-            String type = types[random.nextInt(types.length)];
-
-            appointments.add(new Appointment(patient, doctor, place, time, type));
-        }
-        return appointments;
+    public static List<Participation> generateParticipations(List<Event> events) {
+        List<Participation> list = new ArrayList<>();
+        for (Event e : events)
+            for (Person p : e.getParticipants())
+                list.add(new Participation(p, e, random.nextBoolean()));
+        return list;
     }
 
-    // gera pratos do restaurante
     public static List<Dish> generateDishes() {
         return List.of(
             new Dish("Executivo de Picanha", "Executivo", 31.99),
@@ -93,40 +77,15 @@ public class DataGenerator {
         );
     }
 
-    // gera participações em eventos (com voucher)
-    public static List<Participation> generateParticipations(List<Event> events) {
-        List<Participation> participations = new ArrayList<>();
-        Random random = new Random();
-
-        for (Event e : events) {
-            for (Person p : e.getParticipants()) {
-                boolean voucherUsed = random.nextBoolean(); // aleatório
-                participations.add(new Participation(p, e, voucherUsed));
-            }
-        }
-        return participations;
-    }
-
-    // ✅ gera pedidos do restaurante (necessário pro AnalysisMain)
     public static List<Order> generateOrders(List<Person> people, List<Dish> dishes) {
         List<Order> orders = new ArrayList<>();
-        Random random = new Random();
-
         for (Person p : people) {
-            Order order = new Order();
-
-            // cada pessoa pede entre 1 e 3 pratos
-            int numDishes = 1 + random.nextInt(3);
-            for (int i = 0; i < numDishes; i++) {
-                Dish dish = dishes.get(random.nextInt(dishes.size()));
-                order.addDish(dish);
-            }
-
-            // escolhe forma de pagamento aleatória
-            PaymentMethod method = PaymentMethod.values()[random.nextInt(PaymentMethod.values().length)];
-            order.makePayment(method);
-
-            orders.add(order);
+            Order o = new Order();
+            int num = 1 + random.nextInt(3);
+            for (int i = 0; i < num; i++)
+                o.addDish(dishes.get(random.nextInt(dishes.size())));
+            o.makePayment(PaymentMethod.values()[random.nextInt(PaymentMethod.values().length)]);
+            orders.add(o);
         }
         return orders;
     }
