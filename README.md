@@ -9,7 +9,7 @@ Sistema de gerenciamento simplificado para restaurante, clínica e eventos, com:
 - Cadastro e gerenciamento de pratos (`Dish`)
 - Criação e acompanhamento de pedidos (`Order`)
 - Pagamentos com diferentes métodos (`PaymentMethod`)  
-  - Mostrando o método de pagamento mais usado no restaurante, na clínica e nos eventos
+  - Mostrando o método de pagamento mais usado.
 - Cadastro de pessoas (`Person`) e classificação por tipo (Paciente, Cliente, Participante)
 - Agendamento de consultas (`Appointment`) em clínicas
 - Registro de eventos (`Event`) e participações (`Participation`)
