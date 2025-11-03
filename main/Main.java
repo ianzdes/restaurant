@@ -1,24 +1,22 @@
 package restaurant.main;
 
-import restaurant.shared.Person;
-import restaurant.shared.Place;
-import restaurant.clinic.Appointment;
-import restaurant.event.Event;
-import restaurant.event.Participation;
-import restaurant.restaurant2.Dish;
-import restaurant.restaurant2.Order;
-import restaurant.restaurant2.PaymentMethod;
+import restaurant.shared.*;
+import restaurant.clinic.*;
+import restaurant.event.*;
+import restaurant.restaurant2.*;
 
 import java.util.*;
 import java.text.DecimalFormat;
+import java.time.Duration;
 
 public class Main {
+    private static final DecimalFormat DF = new DecimalFormat("0.00");
+    private static final Random RAND = new Random();
 
     public static void main(String[] args) {
-        DecimalFormat df = new DecimalFormat("0.00");
         Scanner sc = new Scanner(System.in);
 
-        // ---- Gerar dados
+        // gerar dados
         List<Place> places = DataGenerator.generatePlaces();
         List<Person> people = DataGenerator.generatePeople(50);
         List<Dish> dishes = DataGenerator.generateDishes();
@@ -27,29 +25,30 @@ public class Main {
         List<Participation> participations = DataGenerator.generateParticipations(events);
         List<Order> orders = DataGenerator.generateOrders(people, dishes);
 
-        // ---- Menu simples
+        // menu
         boolean running = true;
-        while(running){
-            System.out.println("\n=== MENU DE RELATÓRIOS ===");
-            System.out.println("1 - Pacientes que participam de eventos retornam mais rápido à clínica");
-            System.out.println("2 - Vouchers usados no restaurante e tempo médio de uso");
-            System.out.println("3 - Influência de vouchers/descontos no ticket médio do restaurante");
-            System.out.println("4 - Perfil das pessoas que completam a jornada completa");
-            System.out.println("5 - Tipo de lugar mais usado (clínica, evento, restaurante)");
-            System.out.println("6 - Horários de consultas e eventos mais sobrepostos");
-            System.out.println("7 - Participantes de workshops que voltam ao restaurante");
-            System.out.println("8 - Faixa etária mais ativa");
-            System.out.println("9 - Método de pagamento mais usado por área");
-            System.out.println("0 - Sair");
-            System.out.print("Escolha uma opção: ");
-            int opt = sc.nextInt();
+        while (running) {
+            System.out.println("""
+                \n=== MENU DE RELATÓRIOS ===
+                1 - Pacientes que participam de eventos retornam mais rápido à clínica
+                2 - Vouchers usados no restaurante e tempo médio de uso
+                3 - Influência de vouchers/descontos no ticket médio do restaurante
+                4 - Perfil das pessoas que completam a jornada completa
+                5 - Tipo de lugar mais usado (clínica, evento, restaurante)
+                6 - Horários de consultas e eventos mais sobrepostos
+                7 - Participantes de workshops que voltam ao restaurante
+                8 - Faixa etária mais ativa
+                9 - Método de pagamento mais usado por área
+                0 - Sair
+                Escolha uma opção: """);
 
-            switch(opt){
+            int opt = sc.nextInt();
+            switch (opt) {
                 case 1 -> pacientesRetornoMedio(appointments, events);
-                case 2 -> vouchersUsoMedio(participations, orders);
-                case 3 -> ticketMedioComVouchers(orders);
+                case 2 -> vouchersUsoMedio(participations);
+                case 3 -> ticketMedio(orders);
                 case 4 -> perfilJornadaCompleta(people, appointments, events, orders);
-                case 5 -> lugaresMaisUsados(appointments, events, places);
+                case 5 -> lugaresMaisUsados(appointments, events);
                 case 6 -> horariosMaisPopulares(appointments, events);
                 case 7 -> fidelidadeWorkshops(events, orders);
                 case 8 -> faixaEtariaMaisAtiva(people);
@@ -63,110 +62,99 @@ public class Main {
         System.out.println("Encerrando sistema...");
     }
 
-    // -------- Funções para responder cada pergunta --------
-    static void pacientesRetornoMedio(List<Appointment> appointments, List<Event> events){
-        // calcular média de dias entre consultas para pacientes que participaram de eventos
-        Map<String, List<Appointment>> byPatient = new HashMap<>();
-        for(Appointment a : appointments) byPatient.computeIfAbsent(a.getPatient().getName(), k->new ArrayList<>()).add(a);
+    // relatorios
 
-        long totalDays=0; int count=0;
-        for(String name : byPatient.keySet()){
-            boolean participou = events.stream().anyMatch(e -> e.getParticipants().stream().anyMatch(p->p.getName().equals(name)));
-            if(participou){
-                List<Appointment> list = byPatient.get(name);
-                list.sort(Comparator.comparing(Appointment::getTime));
-                for(int i=1;i<list.size();i++){
-                    long diff = java.time.Duration.between(list.get(i-1).getTime(), list.get(i).getTime()).toDays();
-                    totalDays+=diff; count++;
+    static void pacientesRetornoMedio(List<Appointment> appointments, List<Event> events) {
+        Map<String, List<Appointment>> porPaciente = new HashMap<>();
+        appointments.forEach(a -> porPaciente.computeIfAbsent(a.getPatient().getName(), k -> new ArrayList<>()).add(a));
+
+        double soma = 0; int count = 0;
+        for (var entry : porPaciente.entrySet()) {
+            String nome = entry.getKey();
+            boolean participou = events.stream().anyMatch(e -> e.getParticipants().stream()
+                    .anyMatch(p -> p.getName().equals(nome)));
+            if (participou) {
+                var lista = entry.getValue();
+                lista.sort(Comparator.comparing(Appointment::getTime));
+                for (int i = 1; i < lista.size(); i++) {
+                    soma += Duration.between(lista.get(i - 1).getTime(), lista.get(i).getTime()).toDays();
+                    count++;
                 }
             }
         }
-        System.out.println("Pacientes que participaram de eventos retornam em média após " + (count>0? totalDays/(double)count : 0) + " dias");
+        System.out.println("Pacientes que participaram de eventos retornam em média após "
+                + DF.format(count > 0 ? soma / count : 0) + " dias");
     }
 
-    static void vouchersUsoMedio(List<Participation> participations, List<Order> orders){
-        Random r = new Random();
-        long totalDias=0, count=0;
-        for(Participation p : participations){
-            if(p.isVoucherUsed()){
-                long dias = r.nextInt(15)+1; // simulação
-                totalDias+=dias;
+    static void vouchersUsoMedio(List<Participation> participations) {
+        long totalDias = 0, count = 0;
+        for (Participation p : participations) {
+            if (p.isVoucherUsed()) {
+                totalDias += RAND.nextInt(15) + 1;
                 count++;
             }
         }
-        System.out.println("Vouchers distribuídos em eventos são usados em média após " + (count>0 ? totalDias/count : 0) + " dias");
+        System.out.println("Vouchers distribuídos em eventos são usados em média após "
+                + (count > 0 ? totalDias / count : 0) + " dias");
     }
 
-    static void ticketMedioComVouchers(List<Order> orders){
-        double total=0;
-        for(Order o : orders) total+=o.totalPrice();
-        System.out.println("Ticket médio do restaurante: R$ " + (orders.size()>0 ? new DecimalFormat("0.00").format(total/orders.size()) : 0));
+    static void ticketMedio(List<Order> orders) {
+        double media = orders.stream().mapToDouble(Order::totalPrice).average().orElse(0);
+        System.out.println("Ticket médio do restaurante: R$ " + DF.format(media));
     }
 
-    static void perfilJornadaCompleta(List<Person> people, List<Appointment> appointments, List<Event> events, List<Order> orders){
-        Set<String> consultaSet = new HashSet<>();
-        for(Appointment a: appointments) consultaSet.add(a.getPatient().getName());
-        Set<String> eventoSet = new HashSet<>();
-        for(Event e: events) for(Person p:e.getParticipants()) eventoSet.add(p.getName());
-        Set<String> restauranteSet = new HashSet<>();
-        for(Order o: orders) for(Dish d:o.getItems()) restauranteSet.add(d.getName()); // simplificação
+    static void perfilJornadaCompleta(List<Person> people, List<Appointment> appointments, List<Event> events, List<Order> orders) {
+        Set<String> pacientes = new HashSet<>(), participantes = new HashSet<>(), clientes = new HashSet<>();
 
-        int total=0;
-        for(Person p: people){
-            if(consultaSet.contains(p.getName()) && eventoSet.contains(p.getName()) && !restauranteSet.isEmpty())
-                total++;
-        }
+        appointments.forEach(a -> pacientes.add(a.getPatient().getName()));
+        events.forEach(e -> e.getParticipants().forEach(p -> participantes.add(p.getName())));
+        orders.forEach(o -> clientes.addAll(o.getItems().stream().map(Dish::getName).toList())); // simplificado
+
+        long total = people.stream()
+                .filter(p -> pacientes.contains(p.getName()) && participantes.contains(p.getName()) && !clientes.isEmpty())
+                .count();
+
         System.out.println(total + " pessoas completaram a jornada completa (consulta + evento + refeição)");
     }
 
-    static void lugaresMaisUsados(List<Appointment> appointments, List<Event> events, List<Place> places){
-        Map<String,Integer> count = new HashMap<>();
-        for(Appointment a: appointments) count.put(a.getPlace().getName(), count.getOrDefault(a.getPlace().getName(),0)+1);
-        for(Event e: events) count.put(e.getPlace().getName(), count.getOrDefault(e.getPlace().getName(),0)+1);
-        for(String p: count.keySet()) System.out.println(p + ": " + count.get(p));
+    static void lugaresMaisUsados(List<Appointment> appointments, List<Event> events) {
+        Map<String, Integer> contagem = new HashMap<>();
+        appointments.forEach(a -> contagem.merge(a.getPlace().getName(), 1, Integer::sum));
+        events.forEach(e -> contagem.merge(e.getPlace().getName(), 1, Integer::sum));
+        contagem.forEach((l, c) -> System.out.println(l + ": " + c));
     }
 
-    static void horariosMaisPopulares(List<Appointment> appointments, List<Event> events){
-        Map<Integer,Integer> count = new HashMap<>();
-        for(Appointment a: appointments) count.put(a.getTime().getHour(), count.getOrDefault(a.getTime().getHour(),0)+1);
-        for(Event e: events) count.put(e.getTime().getHour(), count.getOrDefault(e.getTime().getHour(),0)+1);
-        for(int h: count.keySet()) System.out.println(h + "h: " + count.get(h));
+    static void horariosMaisPopulares(List<Appointment> appointments, List<Event> events) {
+        Map<Integer, Integer> horas = new HashMap<>();
+        appointments.forEach(a -> horas.merge(a.getTime().getHour(), 1, Integer::sum));
+        events.forEach(e -> horas.merge(e.getTime().getHour(), 1, Integer::sum));
+        horas.forEach((h, c) -> System.out.println(h + "h: " + c));
     }
 
-    static void fidelidadeWorkshops(List<Event> events, List<Order> orders){
+    static void fidelidadeWorkshops(List<Event> events, List<Order> orders) {
         Set<String> workshopParticipants = new HashSet<>();
-        for(Event e: events){
-            if(e.getType().equalsIgnoreCase("Oficina") || e.getType().equalsIgnoreCase("Workshop"))
-                for(Person p:e.getParticipants()) workshopParticipants.add(p.getName());
-        }
-        Random r = new Random();
-        int total=0;
-        for(Order o: orders) if(r.nextBoolean()) total++; // simulação
+        events.stream()
+                .filter(e -> e.getType().equalsIgnoreCase("Oficina") || e.getType().equalsIgnoreCase("Workshop"))
+                .forEach(e -> e.getParticipants().forEach(p -> workshopParticipants.add(p.getName())));
+
+        int total = (int) orders.stream().filter(o -> RAND.nextBoolean()).count();
         System.out.println(total + " participantes de workshops voltaram ao restaurante");
     }
 
-    static void faixaEtariaMaisAtiva(List<Person> people){
-        Map<String,Integer> ageGroup = new HashMap<>();
-        for(Person p: people){
-            String g = (p.getAge()<30)?"18-29":(p.getAge()<50)?"30-49":"50+";
-            ageGroup.put(g, ageGroup.getOrDefault(g,0)+1);
+    static void faixaEtariaMaisAtiva(List<Person> people) {
+        Map<String, Integer> grupos = new HashMap<>();
+        for (Person p : people) {
+            String faixa = (p.getAge() < 30) ? "18-29" : (p.getAge() < 50) ? "30-49" : "50+";
+            grupos.merge(faixa, 1, Integer::sum);
         }
-        String maxGroup=""; int max=0;
-        for(String g: ageGroup.keySet()) if(ageGroup.get(g)>max){ max=ageGroup.get(g); maxGroup=g;}
-        System.out.println("Faixa etária mais ativa: " + maxGroup);
+        String maisAtiva = grupos.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("N/A");
+        System.out.println("Faixa etária mais ativa: " + maisAtiva);
     }
 
-    static void metodoPagamentoMaisUsado(List<Order> orders){
-        Map<PaymentMethod,Integer> count = new HashMap<>();
-        for(Order o: orders){
-            PaymentMethod m = o.getPaymentMethod();
-            count.put(m,count.getOrDefault(m,0)+1);
-        }
-        PaymentMethod mostUsed=null; int max=0;
-        for(PaymentMethod m: count.keySet()){
-            if(count.get(m)>max){ max=count.get(m); mostUsed=m;}
-        }
-        System.out.println("Método de pagamento mais usado no restaurante: " + mostUsed);
+    static void metodoPagamentoMaisUsado(List<Order> orders) {
+        Map<PaymentMethod, Integer> contagem = new HashMap<>();
+        orders.forEach(o -> contagem.merge(o.getPaymentMethod(), 1, Integer::sum));
+        var maisUsado = contagem.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(null);
+        System.out.println("Método de pagamento mais usado no restaurante: " + maisUsado);
     }
-
 }
