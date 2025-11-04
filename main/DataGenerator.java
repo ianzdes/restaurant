@@ -108,7 +108,7 @@ public class DataGenerator {
         return orders;
     }
 
-    // utilitário genérico (pesquisar o que faz)
+    // utilitário genérico
     private static <T> T randomFrom(T[] array) {
         return array[R.nextInt(array.length)];
     }

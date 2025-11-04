@@ -8,7 +8,7 @@ public class Dish {
     private String category;
     private double price;
 
-    // Lista fixa de pratos — o cardápio
+    // cardápio
     private static final List<Dish> MENU = List.of(
         new Dish("Executivo de Picanha", "Prato principal", 31.99),
         new Dish("Salada Vegana", "Fit", 24.50),
@@ -19,14 +19,14 @@ public class Dish {
 
     private static final Random random = new Random();
 
-    // Constructor
+    // constructor
     public Dish(String name, String category, double price) {
         this.name = name;
         this.category = category;
         this.price = price;
     }
 
-    // Getters e setters
+    // getters, setters
     public String getName() { return name; }
 
     public void setName(String name) {
@@ -47,14 +47,12 @@ public class Dish {
         this.price = price;
     }
 
-    // ====== Métodos do cardápio ======
-
-    // Retorna a lista completa do cardápio
+    // retorna a lista completa do cardápio
     public static List<Dish> getMenu() {
         return MENU;
     }
 
-    // Retorna um prato aleatório do cardápio
+    // retorna um prato aleatório do cardápio
     public static Dish getRandomDish() {
         return MENU.get(random.nextInt(MENU.size()));
     }

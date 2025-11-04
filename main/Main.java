@@ -42,17 +42,17 @@ public class Main {
                 0 - Sair
                 Escolha uma opção: """);
 
-            int opt = sc.nextInt();
-            switch (opt) {
-                case 1 -> pacientesRetornoMedio(appointments, events);
-                case 2 -> vouchersUsoMedio(participations);
-                case 3 -> ticketMedio(orders);
-                case 4 -> perfilJornadaCompleta(people, appointments, events, orders);
-                case 5 -> lugaresMaisUsados(appointments, events);
-                case 6 -> horariosMaisPopulares(appointments, events);
-                case 7 -> fidelidadeWorkshops(events, orders);
-                case 8 -> faixaEtariaMaisAtiva(people);
-                case 9 -> metodoPagamentoMaisUsado(orders);
+            int option = sc.nextInt();
+            switch (option) {
+                case 1 -> patientsReturnAverage(appointments, events);
+                case 2 -> voucherUsageAverage(participations);
+                case 3 -> averageTicket(orders);
+                case 4 -> fullJourneyProfile(people, appointments, events, orders);
+                case 5 -> mostUsedPlaces(appointments, events);
+                case 6 -> overlappingHours(appointments, events);
+                case 7 -> workshopLoyalty(events, orders);
+                case 8 -> mostActiveAgeGroup(people);
+                case 9 -> mostUsedPaymentMethod(orders);
                 case 0 -> running = false;
                 default -> System.out.println("Opção inválida!");
             }
@@ -62,76 +62,82 @@ public class Main {
         System.out.println("Encerrando sistema...");
     }
 
-    // relatorios
+    // relatórios
 
-    static void pacientesRetornoMedio(List<Appointment> appointments, List<Event> events) {
-        Map<String, List<Appointment>> porPaciente = new HashMap<>();
-        appointments.forEach(a -> porPaciente.computeIfAbsent(a.getPatient().getName(), k -> new ArrayList<>()).add(a));
+    static void patientsReturnAverage(List<Appointment> appointments, List<Event> events) {
+        Map<String, List<Appointment>> byPatient = new HashMap<>();
+        appointments.forEach(a -> byPatient.computeIfAbsent(a.getPatient().getName(), k -> new ArrayList<>()).add(a));
 
-        double soma = 0; int count = 0;
-        for (var entry : porPaciente.entrySet()) {
-            String nome = entry.getKey();
-            boolean participou = events.stream().anyMatch(e -> e.getParticipants().stream()
-                    .anyMatch(p -> p.getName().equals(nome)));
-            if (participou) {
-                var lista = entry.getValue();
-                lista.sort(Comparator.comparing(Appointment::getTime));
-                for (int i = 1; i < lista.size(); i++) {
-                    soma += Duration.between(lista.get(i - 1).getTime(), lista.get(i).getTime()).toDays();
+        double sum = 0;
+        int count = 0;
+
+        for (var entry : byPatient.entrySet()) {
+            String name = entry.getKey();
+            boolean attendedEvent = events.stream().anyMatch(e -> e.getParticipants().stream()
+                    .anyMatch(p -> p.getName().equals(name)));
+            if (attendedEvent) {
+                var list = entry.getValue();
+                list.sort(Comparator.comparing(Appointment::getTime));
+                for (int i = 1; i < list.size(); i++) {
+                    sum += Duration.between(list.get(i - 1).getTime(), list.get(i).getTime()).toDays();
                     count++;
                 }
             }
         }
         System.out.println("Pacientes que participaram de eventos retornam em média após "
-                + DF.format(count > 0 ? soma / count : 0) + " dias");
+                + DF.format(count > 0 ? sum / count : 0) + " dias");
     }
 
-    static void vouchersUsoMedio(List<Participation> participations) {
-        long totalDias = 0, count = 0;
-        for (Participation p : participations) {
-            if (p.isVoucherUsed()) {
-                totalDias += RAND.nextInt(15) + 1;
+    static void voucherUsageAverage(List<Participation> participations) {
+        long totalDays = 0, count = 0;
+        for (Participation participation : participations) {
+            if (participation.isVoucherUsed()) {
+                totalDays += RAND.nextInt(15) + 1;
                 count++;
             }
         }
         System.out.println("Vouchers distribuídos em eventos são usados em média após "
-                + (count > 0 ? totalDias / count : 0) + " dias");
+                + (count > 0 ? totalDays / count : 0) + " dias");
     }
 
-    static void ticketMedio(List<Order> orders) {
-        double media = orders.stream().mapToDouble(Order::totalPrice).average().orElse(0);
-        System.out.println("Ticket médio do restaurante: R$ " + DF.format(media));
+    static void averageTicket(List<Order> orders) {
+        double avg = orders.stream().mapToDouble(Order::totalPrice).average().orElse(0);
+        System.out.println("Ticket médio do restaurante: R$ " + DF.format(avg));
     }
 
-    static void perfilJornadaCompleta(List<Person> people, List<Appointment> appointments, List<Event> events, List<Order> orders) {
-        Set<String> pacientes = new HashSet<>(), participantes = new HashSet<>(), clientes = new HashSet<>();
+    static void fullJourneyProfile(List<Person> people, List<Appointment> appointments, List<Event> events, List<Order> orders) {
+        Set<String> patientNames = new HashSet<>();
+        Set<String> participantNames = new HashSet<>();
+        Set<String> clientNames = new HashSet<>();
 
-        appointments.forEach(a -> pacientes.add(a.getPatient().getName()));
-        events.forEach(e -> e.getParticipants().forEach(p -> participantes.add(p.getName())));
-        orders.forEach(o -> clientes.addAll(o.getItems().stream().map(Dish::getName).toList())); // simplificado
+        appointments.forEach(a -> patientNames.add(a.getPatient().getName()));
+        events.forEach(e -> e.getParticipants().forEach(p -> participantNames.add(p.getName())));
+        orders.forEach(o -> clientNames.addAll(o.getItems().stream().map(Dish::getName).toList())); // simplificação
 
         long total = people.stream()
-                .filter(p -> pacientes.contains(p.getName()) && participantes.contains(p.getName()) && !clientes.isEmpty())
+                .filter(p -> patientNames.contains(p.getName()) &&
+                        participantNames.contains(p.getName()) &&
+                        !clientNames.isEmpty())
                 .count();
 
         System.out.println(total + " pessoas completaram a jornada completa (consulta + evento + refeição)");
     }
 
-    static void lugaresMaisUsados(List<Appointment> appointments, List<Event> events) {
-        Map<String, Integer> contagem = new HashMap<>();
-        appointments.forEach(a -> contagem.merge(a.getPlace().getName(), 1, Integer::sum));
-        events.forEach(e -> contagem.merge(e.getPlace().getName(), 1, Integer::sum));
-        contagem.forEach((l, c) -> System.out.println(l + ": " + c));
+    static void mostUsedPlaces(List<Appointment> appointments, List<Event> events) {
+        Map<String, Integer> count = new HashMap<>();
+        appointments.forEach(a -> count.merge(a.getPlace().getName(), 1, Integer::sum));
+        events.forEach(e -> count.merge(e.getPlace().getName(), 1, Integer::sum));
+        count.forEach((place, c) -> System.out.println(place + ": " + c));
     }
 
-    static void horariosMaisPopulares(List<Appointment> appointments, List<Event> events) {
-        Map<Integer, Integer> horas = new HashMap<>();
-        appointments.forEach(a -> horas.merge(a.getTime().getHour(), 1, Integer::sum));
-        events.forEach(e -> horas.merge(e.getTime().getHour(), 1, Integer::sum));
-        horas.forEach((h, c) -> System.out.println(h + "h: " + c));
+    static void overlappingHours(List<Appointment> appointments, List<Event> events) {
+        Map<Integer, Integer> hourCount = new HashMap<>();
+        appointments.forEach(a -> hourCount.merge(a.getTime().getHour(), 1, Integer::sum));
+        events.forEach(e -> hourCount.merge(e.getTime().getHour(), 1, Integer::sum));
+        hourCount.forEach((hour, c) -> System.out.println(hour + "h: " + c));
     }
 
-    static void fidelidadeWorkshops(List<Event> events, List<Order> orders) {
+    static void workshopLoyalty(List<Event> events, List<Order> orders) {
         Set<String> workshopParticipants = new HashSet<>();
         events.stream()
                 .filter(e -> e.getType().equalsIgnoreCase("Oficina") || e.getType().equalsIgnoreCase("Workshop"))
@@ -141,20 +147,28 @@ public class Main {
         System.out.println(total + " participantes de workshops voltaram ao restaurante");
     }
 
-    static void faixaEtariaMaisAtiva(List<Person> people) {
-        Map<String, Integer> grupos = new HashMap<>();
-        for (Person p : people) {
-            String faixa = (p.getAge() < 30) ? "18-29" : (p.getAge() < 50) ? "30-49" : "50+";
-            grupos.merge(faixa, 1, Integer::sum);
+    static void mostActiveAgeGroup(List<Person> people) {
+        Map<String, Integer> groups = new HashMap<>();
+        for (Person person : people) {
+            String group = (person.getAge() < 30) ? "18-29"
+                    : (person.getAge() < 50) ? "30-49" : "50+";
+            groups.merge(group, 1, Integer::sum);
         }
-        String maisAtiva = grupos.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse("N/A");
-        System.out.println("Faixa etária mais ativa: " + maisAtiva);
+        String mostActive = groups.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey).orElse("N/A");
+
+        System.out.println("Faixa etária mais ativa: " + mostActive);
     }
 
-    static void metodoPagamentoMaisUsado(List<Order> orders) {
-        Map<PaymentMethod, Integer> contagem = new HashMap<>();
-        orders.forEach(o -> contagem.merge(o.getPaymentMethod(), 1, Integer::sum));
-        var maisUsado = contagem.entrySet().stream().max(Map.Entry.comparingByValue()).map(Map.Entry::getKey).orElse(null);
-        System.out.println("Método de pagamento mais usado no restaurante: " + maisUsado);
+    static void mostUsedPaymentMethod(List<Order> orders) {
+        Map<PaymentMethod, Integer> count = new HashMap<>();
+        orders.forEach(o -> count.merge(o.getPaymentMethod(), 1, Integer::sum));
+        var mostUsed = count.entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse(null);
+
+        System.out.println("Método de pagamento mais usado no restaurante: " + mostUsed);
     }
 }

@@ -15,8 +15,5 @@ public class Participation {
     public Person getPerson() { return person; }
     public Event getEvent() { return event; }
     public boolean isVoucherUsed() { return voucherUsed; }
-
-    public void useVoucher() { 
-        this.voucherUsed = true;
-    }
-} 
+    public void useVoucher() { this.voucherUsed = true; }
+}

@@ -21,9 +21,7 @@ public class Event {
         this.participants = new ArrayList<>();
     }
 
-    public void addParticipant(Person p) {
-        participants.add(p);
-    }
+    public void addParticipant(Person p) { participants.add(p); }
 
     public String getName() { return name; }
     public String getType() { return type; }
