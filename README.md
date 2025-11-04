@@ -35,6 +35,9 @@ O sistema gera dados automaticamente e permite analisar o comportamento de clien
 - Método de pagamento mais usado?
 
 ## Como executar:
-1. Compile todos os arquivos Java:
+1. Clone o repositório
+2. Rode no VSCode
+3. Caso não funcione, compile no terminal escrevendo o seguinte:
 ```bash
-javac shared/*.java clinic/*.java event/*.java restaurant2/*.java main/*.java
+javac restaurant/**/*.java
+java restaurant.main.Main
