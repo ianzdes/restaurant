@@ -12,28 +12,7 @@ public class DataGenerator {
 
     private static final Random R = new Random();
 
-    // ======== GERAÇÃO DE DADOS ========
-
-    // Locais fixos: clínica, centro de eventos e restaurante
-    public static List<Place> generatePlaces() {
-        return List.of(
-            new Place("Clínica Vida Plena", 30),
-            new Place("Centro Cultural Recife", 100),
-            new Place("Restaurante Natural", 40)
-        );
-    }
-
-    // Pessoas com idades variadas e diferentes papéis
-    public static List<Person> generatePeople(int quantity) {
-        String[] types = {"Paciente", "Participante", "Cliente"};
-        List<Person> list = new ArrayList<>(quantity);
-        for (int i = 1; i <= quantity; i++) {
-            list.add(new Person("Pessoa " + i, 18 + R.nextInt(50), randomFrom(types)));
-        }
-        return list;
-    }
-
-    // Consultas na clínica
+    // quantas consultas foram realizadas no total
     public static List<Appointment> generateAppointments(int quantity, List<Person> people, List<Place> places) {
         String[] doctors = {"Dr. Silva", "Dra. Lima", "Dr. Souza"};
         String[] types = {"Primeira consulta", "Retorno", "Check-up"};
@@ -43,7 +22,7 @@ public class DataGenerator {
             list.add(new Appointment(
                 randomFrom(people),
                 randomFrom(doctors),
-                places.get(0), // clínica
+                places.get(0), // Clínica
                 LocalDateTime.now().plusDays(R.nextInt(10)).withHour(8 + R.nextInt(8)),
                 randomFrom(types)
             ));
@@ -51,7 +30,16 @@ public class DataGenerator {
         return list;
     }
 
-    // Eventos com participantes aleatórios
+    // tipo de lugar mais usado (clinica, evento, restaurante)
+    public static List<Place> generatePlaces() {
+        return List.of(
+            new Place("Clínica Vida Plena", 30),
+            new Place("Centro Cultural Recife", 100),
+            new Place("Restaurante Natural", 40)
+        );
+    }
+
+    // quais horários de eventos e consultas mais se sobrepõem
     public static List<Event> generateEvents(int quantity, List<Place> places, List<Person> people) {
         String[] types = {"Palestra", "Oficina", "Show"};
         List<Event> events = new ArrayList<>(quantity);
@@ -74,7 +62,17 @@ public class DataGenerator {
         return events;
     }
 
-    // Cardápio fixo do restaurante
+    // pessoas (faixa etária mais ativa)
+    public static List<Person> generatePeople(int quantity) {
+        String[] types = {"Paciente", "Participante", "Cliente"};
+        List<Person> list = new ArrayList<>(quantity);
+        for (int i = 1; i <= quantity; i++) {
+            list.add(new Person("Pessoa " + i, 18 + R.nextInt(50), randomFrom(types)));
+        }
+        return list;
+    }
+
+    // 5,6 pagamentos e pratos do restaurante
     public static List<Dish> generateDishes() {
         return List.of(
             new Dish("Executivo de Picanha", "Executivo", 31.99),
@@ -86,7 +84,6 @@ public class DataGenerator {
         );
     }
 
-    // Pedidos de pessoas no restaurante
     public static List<Order> generateOrders(List<Person> people, List<Dish> dishes) {
         List<Order> orders = new ArrayList<>();
         for (Person p : people) {
@@ -101,14 +98,15 @@ public class DataGenerator {
         return orders;
     }
 
-    // ✅ Quantidade total de consultas realizadas
-    static void totalAppointments(List<Appointment> appointments) {
-        int total = appointments.size();
-        System.out.println("Quantidade total de consultas realizadas: " + total);
+    // 7-9. eventos: mais participantes, tipos, média de idade
+    // (essas perguntas são respondidas diretamente no Main, com base nos dados gerados)
+
+    // utilitário: contar total de consultas
+    public static void totalAppointments(List<Appointment> appointments) {
+        System.out.println("Quantidade total de consultas realizadas: " + appointments.size());
     }
 
-    // ======== MÉTODOS AUXILIARES ========
-
+    // métodos auxiliares genéricos
     private static <T> T randomFrom(T[] array) {
         return array[R.nextInt(array.length)];
     }

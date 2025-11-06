@@ -22,7 +22,14 @@ public class Order {
     }
 
     public void makePayment(PaymentMethod method) {
-        
+        if (method == null) throw new IllegalArgumentException("Método de pagamento inválido.");
+
+        switch (method) {
+            case CASH -> makeCashPayment(totalPrice()); // valor exato (sem troco)
+            case CREDIT_CARD, DEBIT_CARD -> makeCardPayment(method);
+            case PIX -> makePixPayment();
+            default -> throw new IllegalArgumentException("Método de pagamento não reconhecido.");
+        }
     }
 
     public void makeCashPayment(double amountPaid) {

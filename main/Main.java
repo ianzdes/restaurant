@@ -58,17 +58,14 @@ public class Main {
         System.out.println("Encerrando sistema...");
     }
 
-    // ────────────────────────────
-    // 1 - Quantidade total de consultas
-    // ────────────────────────────
+    //quantidade total de consultas
+    
     static void totalAppointments(List<Appointment> appointments) {
         int total = appointments.size();
         System.out.println("Quantidade total de consultas realizadas: " + total);
     }
 
-    // ────────────────────────────
-    // 2 - Lugares mais usados
-    // ────────────────────────────
+    // lugares mais usados
     static void mostUsedPlaces(List<Appointment> appointments, List<Event> events) {
         Map<String, Integer> count = new HashMap<>();
         appointments.forEach(a -> count.merge(a.getPlace().getName(), 1, Integer::sum));
@@ -78,9 +75,7 @@ public class Main {
         count.forEach((place, c) -> System.out.println("- " + place + ": " + c + " vezes"));
     }
 
-    // ────────────────────────────
-    // 3 - Horários sobrepostos
-    // ────────────────────────────
+    // horários sobrepostos
     static void overlappingHours(List<Appointment> appointments, List<Event> events) {
         Map<Integer, Integer> hourCount = new HashMap<>();
         appointments.forEach(a -> hourCount.merge(a.getTime().getHour(), 1, Integer::sum));
@@ -90,9 +85,7 @@ public class Main {
         hourCount.forEach((hour, c) -> System.out.println(hour + "h: " + c + " atividades"));
     }
 
-    // ────────────────────────────
-    // 4 - Faixa etária mais ativa
-    // ────────────────────────────
+    // faixa etária mais ativa
     static void mostActiveAgeGroup(List<Person> people) {
         Map<String, Integer> groups = new HashMap<>();
         for (Person person : people) {
@@ -108,9 +101,7 @@ public class Main {
         System.out.println("Faixa etária mais ativa: " + mostActive);
     }
 
-    // ────────────────────────────
-    // 5 - Método de pagamento mais usado
-    // ────────────────────────────
+    // método de pagamento mais usado
     static void mostUsedPaymentMethod(List<Order> orders) {
         Map<PaymentMethod, Integer> count = new HashMap<>();
         orders.forEach(o -> count.merge(o.getPaymentMethod(), 1, Integer::sum));
@@ -122,9 +113,7 @@ public class Main {
         System.out.println("Método de pagamento mais usado: " + mostUsed);
     }
 
-    // ────────────────────────────
-    // 6 - Prato mais pedido
-    // ────────────────────────────
+    // prato mais usado
     static void mostOrderedDish(List<Order> orders) {
         Map<String, Integer> count = new HashMap<>();
         for (Order o : orders)
@@ -138,9 +127,7 @@ public class Main {
         System.out.println("Prato mais pedido: " + mostOrdered);
     }
 
-    // ────────────────────────────
-    // 7 - Evento com mais participantes
-    // ────────────────────────────
+    // evento com mais participantes
     static void eventWithMostParticipants(List<Event> events) {
         var maxEvent = events.stream()
                 .max(Comparator.comparingInt(e -> e.getParticipants().size()))
@@ -153,9 +140,7 @@ public class Main {
             System.out.println("Nenhum evento encontrado.");
     }
 
-    // ────────────────────────────
-    // 8 - Consultas por tipo
-    // ────────────────────────────
+    // consultas por tipo
     static void appointmentTypeCount(List<Appointment> appointments) {
         Map<String, Integer> count = new HashMap<>();
         appointments.forEach(a -> count.merge(a.getType(), 1, Integer::sum));
@@ -164,9 +149,7 @@ public class Main {
         count.forEach((type, c) -> System.out.println("- " + type + ": " + c));
     }
 
-    // ────────────────────────────
-    // 9 - Média de idade dos participantes de eventos
-    // ────────────────────────────
+    // média de idade dos participantes de eventos
     static void averageEventParticipantAge(List<Event> events) {
         List<Person> participants = new ArrayList<>();
         events.forEach(e -> participants.addAll(e.getParticipants()));
