@@ -24,15 +24,15 @@ O sistema gera dados automaticamente e permite analisar o comportamento de clien
 - Método de pagamento mais usado em cada área
 
 ## Perguntas:
-- Pacientes que participam de eventos retornam mais rápido à clínica?
-- Vouchers distribuídos em eventos são usados no restaurante e em quanto tempo?
-- Descontos da clínica ou vouchers influenciam o ticket médio do restaurante?
-- Qual é o perfil da pessoa que completa a jornada completa (consulta + evento + refeição)?
+- Quantas consultas foram realizadas no total?
 - Qual tipo de lugar é mais usado entre clínica, eventos e restaurante?
 - Quais horários de eventos e consultas mais se sobrepõem?
-- Participantes de workshops voltam a consumir no restaurante depois?
 - Qual faixa etária é mais ativa?
 - Método de pagamento mais usado?
+- Qual é o prato mais pedido no restaurante?
+- Qual evento teve mais participantes?
+- Quantas consultas foram realizadas por tipo (primeira, retorno, check-up)?
+- Qual é a média de idade dos participantes de eventos?
 
 ## Como executar:
 1. Clone o repositório

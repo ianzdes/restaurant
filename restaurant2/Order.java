@@ -4,32 +4,59 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
-    // attributes
-    private List<Dish> items; // pratos
+    private List<Dish> items;
     private PaymentMethod paymentMethod;
-    // constructor
+    private double totalPaid;
+    private double change;
+
     public Order() {
         this.items = new ArrayList<>();
     }
-    // methods
+
     public void addDish(Dish dish) {
         items.add(dish);
     }
 
     public double totalPrice() {
-        double total = 0;
-
-        for (Dish dish : items) {
-            total += dish.getPrice();
-        }
-        return total;
+        return items.stream().mapToDouble(Dish::getPrice).sum();
     }
 
-    // getters
+    public void makePayment(PaymentMethod method) {
+        
+    }
+
+    public void makeCashPayment(double amountPaid) {
+        double total = totalPrice();
+        if (amountPaid < total) {
+            throw new IllegalArgumentException("valor pago é menor que o total do pedido.");
+        }
+        this.paymentMethod = PaymentMethod.CASH;
+        this.totalPaid = amountPaid;
+        this.change = amountPaid - total;
+    }
+
+    public void makeCardPayment(PaymentMethod method) {
+        if (method != PaymentMethod.CREDIT_CARD && method != PaymentMethod.DEBIT_CARD) {
+            throw new IllegalArgumentException("método deve ser cartão de crédito ou débito.");
+        }
+        this.paymentMethod = method;
+        this.totalPaid = totalPrice() * 1.03;
+        this.change = 0;
+    }
+
+    public void makePixPayment() {
+        this.paymentMethod = PaymentMethod.PIX;
+        this.totalPaid = totalPrice();
+        this.change = 0;
+    }
+
     public List<Dish> getItems() { return items; }
     public PaymentMethod getPaymentMethod() { return paymentMethod; }
+    public double getTotalPaid() { return totalPaid; }
+    public double getChange() { return change; }
 
-    public void makePayment(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    @Override
+    public String toString() {
+        return String.format("pedido: %d itens, total R$ %.2f, pago via %s, troco R$ %.2f", items.size(), totalPrice(), paymentMethod, change);
     }
 }
