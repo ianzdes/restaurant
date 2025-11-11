@@ -1,5 +1,8 @@
 # Sistema Integrado POO
 
+## Imagem:
+- (imagem do sistema aqui)
+
 ## Integrantes: 
 - Ian de Sousa Pereira
 
@@ -33,6 +36,12 @@ O sistema gera dados automaticamente e permite analisar o comportamento de clien
 - Qual evento teve mais participantes?
 - Quantas consultas foram realizadas por tipo (primeira, retorno, check-up)?
 - Qual é a média de idade dos participantes de eventos?
+
+## Linkedin:
+ - https://www.linkedin.com/in/ian-de-sousa-02a596286/
+
+## Diagrama UML:
+- ![alt text](uml.png "diagrama uml")
 
 ## Como executar:
 1. Clone o repositório
