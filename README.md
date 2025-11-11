@@ -1,7 +1,7 @@
 # Sistema Integrado POO
 
-## Imagem:
-- (imagem do sistema aqui)
+## Logo:
+- ![alt text](logo.png "logo")
 
 ## Integrantes: 
 - Ian de Sousa Pereira
